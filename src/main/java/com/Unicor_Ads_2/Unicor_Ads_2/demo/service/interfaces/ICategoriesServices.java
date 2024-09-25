@@ -14,16 +14,12 @@ public interface ICategoriesServices {
 
 void saveCategory(CategoriesPayload categoriesPayload);
 
-void  deleteCategory(String code);
-    Optional<Categories> findCategoriesByCodeIgnoreCase( String code);
+    String  deleteByCode(String code);
+    Optional<CategoriesDto> findCategoriesByCodeIgnoreCase( String code);
+    Optional<CategoriesDto> findCategoriesByNameIgnoreCase( String name);
 
-    /**
-     * Lista las categorías con paginación.
-     *
-     * @param pageable Información de paginación (número de página y tamaño de página).
-     * @return Un objeto Page que contiene la lista de categorías y la información de paginación.
-     */
-    Page<CategoriesDto> listCategories(Pageable pageable);
+
+    Page<CategoriesDto>findCategorias(int page, int size);
 
 
 void updateCategory(CategoriesPayload categoriesPayload , String code);

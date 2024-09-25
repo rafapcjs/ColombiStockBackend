@@ -3,52 +3,49 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.entities;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.enums.StatusEntity;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class BaseEntity {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(unique = true, nullable = false, updatable = false)
     private UUID uuid;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable = false, nullable = false)
     @CreatedDate
-    private Date createdAt;
+    @Column(nullable = false, updatable = false)
+    private Date createDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    @LastModifiedDate
-    private Date updatedAt;
+    private Date updateDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private StatusEntity statusEntity;
+    private StatusEntity statusEntity = StatusEntity.ACTIVE;
+
 
     @PrePersist
-    protected void prePersist() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-        }
-        if (createdAt == null) {
-            createdAt = new Date();
-        }
-        if (statusEntity == null) {
-            statusEntity = StatusEntity.ACTIVE;
-        }
+    public void generateUuid() {
+        uuid = UUID.randomUUID();
     }
 
     @PreUpdate
-    protected void preUpdate() {
-        updatedAt = new Date();
+    public  void preUpdate(){
+        updateDate = new Date();
     }
+
 }
