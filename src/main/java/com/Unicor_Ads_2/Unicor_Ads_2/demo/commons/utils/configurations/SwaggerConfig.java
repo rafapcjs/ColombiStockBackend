@@ -1,4 +1,4 @@
-package com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.configurations;
+package com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.configurations;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;

@@ -5,16 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
+ 
+
 @Builder
 
-public class CategoriesDto {
+public record CategoriesDto (
+         String name,
 
-    private String name;
+          String description,
 
-    private  String description;
+         String code){
 
-    private String code;
 }

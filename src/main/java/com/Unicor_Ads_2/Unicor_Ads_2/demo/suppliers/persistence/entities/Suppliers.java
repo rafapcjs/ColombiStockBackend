@@ -31,6 +31,7 @@ public class Suppliers extends BaseEntity {
     @NotBlank(message = "El DNI no puede estar vacío.")
     @Size(max = 20, message = "El DNI no puede exceder los 20 caracteres.")
     @Pattern(regexp = "^[0-9]+$", message = "El DNI debe contener solo números.")
+    @Column(unique = true, nullable = false) // Asegurar que el DNI sea único
     private String dni;
 
     @NotBlank(message = "El número de contacto no puede estar vacío.")

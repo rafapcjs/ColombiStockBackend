@@ -23,4 +23,5 @@ public class Categories extends BaseEntity {
 
  @Column(name = "code", nullable = false, updatable = false, unique = true)
  private String code;
+
 }
