@@ -1,4 +1,4 @@
-Copiar
+
 # 📦 Sistema de Gestión de Inventario para Tiendas Minoristas
 
 Este proyecto tiene como objetivo la creación de un Sistema de Gestión de Inventario para tiendas minoristas en Colombia. El sistema está diseñado para mejorar el control de stock, reducir costos y asegurar la disponibilidad de productos, permitiendo una administración eficiente tanto para los administradores como para los empleados de las tiendas.
