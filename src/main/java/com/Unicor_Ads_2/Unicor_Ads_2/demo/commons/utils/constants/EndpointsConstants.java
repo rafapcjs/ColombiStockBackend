@@ -9,5 +9,7 @@ public class EndpointsConstants {
     public static  final String ENDPOINT_BASE_API="/api/v1";
     public static  final String ENDPOINT_CATEGORIES=ENDPOINT_BASE_API+"/categories";
     public static  final String ENDPOINT_PRODUCTS=ENDPOINT_BASE_API+"/products";
+    public static  final String ENDPOINT_SUPPLIERS=ENDPOINT_BASE_API+"/suppliers";
+
     //
 }
