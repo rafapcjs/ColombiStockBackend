@@ -41,7 +41,7 @@ public class ControllerSuppliers {
 
     public ResponseEntity<?> save(@RequestBody SupplierPayload supplierPayload) throws URISyntaxException {
         iSuppliersServices.saveSupplier(supplierPayload);
-        return ResponseEntity.created(new URI("/api/v1/suppliers")).build();
+        return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_SUPPLIERS)).build();
     }
 
 
