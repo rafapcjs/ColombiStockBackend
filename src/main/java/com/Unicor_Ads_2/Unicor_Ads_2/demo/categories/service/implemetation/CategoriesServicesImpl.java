@@ -65,8 +65,6 @@ public class CategoriesServicesImpl implements ICategoriesServices {
     }
 
 
-
-
     @Override
     @Transactional(readOnly = true)
     public Page<CategoriesDto> findCategorias(Pageable pageable) {

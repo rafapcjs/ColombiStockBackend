@@ -21,7 +21,7 @@ import java.util.Optional;
 
 public class ControllerCategories {
 
-     private  final  ICategoriesServices iCategoriesServices;
+    private final ICategoriesServices iCategoriesServices;
 
     @PostMapping()
     public ResponseEntity<?> save(@RequestBody CategoriesPayload categoriesPayload) throws URISyntaxException {
@@ -48,9 +48,10 @@ public class ControllerCategories {
 
         return ResponseEntity.ok(categories);
     }
+
     @GetMapping("/{code}")
-    public ResponseEntity<?>getCode(@PathVariable String code){
-        Optional<CategoriesDto>categoriesDto= iCategoriesServices.findCategoriesByCodeIgnoreCase(code);
+    public ResponseEntity<?> getCode(@PathVariable String code) {
+        Optional<CategoriesDto> categoriesDto = iCategoriesServices.findCategoriesByCodeIgnoreCase(code);
 
         return new ResponseEntity<>(categoriesDto, HttpStatus.OK);
 

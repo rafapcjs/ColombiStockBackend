@@ -3,7 +3,13 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.payload;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class SupplierPayload {
 
     @NotBlank(message = "El nombre no puede estar vacío.")
@@ -26,5 +32,5 @@ public class SupplierPayload {
     @Size(max = 100, message = "El correo electrónico no puede exceder los 100 caracteres.")
     private String email;
 
-    // Getters y setters
+
 }
