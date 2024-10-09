@@ -1,4 +1,4 @@
-package com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.payload.dto;
+package com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.dto;
 
 import lombok.Builder;
 
