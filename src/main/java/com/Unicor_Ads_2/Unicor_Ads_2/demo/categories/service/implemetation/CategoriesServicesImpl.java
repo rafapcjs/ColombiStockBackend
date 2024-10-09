@@ -1,5 +1,6 @@
 package com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.service.implemetation;
 
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.factory.CategoryFactory;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.entities.Categories;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.repositories.CategoriesRepository;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.presentation.dto.CategoriesDto;
@@ -25,6 +26,7 @@ public class CategoriesServicesImpl implements ICategoriesServices {
 
     private final CategoriesRepository categoriesRepository;
     private final ModelMapper modelMapper;
+    private final CategoryFactory categoryFactory;
 
     @Override
     @Transactional
@@ -57,11 +59,7 @@ public class CategoriesServicesImpl implements ICategoriesServices {
 
     public Optional<CategoriesDto> findCategoriesByCodeIgnoreCase(String code) {
         return this.categoriesRepository.findCategoriesByCodeIgnoreCase(code)
-                .map(categories -> CategoriesDto.builder()
-                        .code(categories.getCode())
-                        .description(categories.getDescription())
-                        .name(categories.getName())
-                        .build());
+                .map(categories -> categoryFactory.createCategoryDto(categories));
     }
 
 
@@ -73,11 +71,7 @@ public class CategoriesServicesImpl implements ICategoriesServices {
 
         // Convertir la lista de categorías a una lista de DTOs
         List<CategoriesDto> categoriesDtoList = categoriesPage.stream()
-                .map(categories -> CategoriesDto.builder()
-                        .name(categories.getName())
-                        .code(categories.getCode())
-                        .description(categories.getDescription())
-                        .build())
+                .map(categories -> categoryFactory.createCategoryDto(categories))
                 .collect(Collectors.toList());
 
         // Retornar una nueva página de DTOs con la información de paginación

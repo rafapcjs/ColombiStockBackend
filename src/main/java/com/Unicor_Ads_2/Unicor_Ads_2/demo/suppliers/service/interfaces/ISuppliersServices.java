@@ -1,7 +1,7 @@
 package com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.service.interfaces;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.payload.SupplierPayload;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.payload.dto.SupplierDto;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.dto.SupplierDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

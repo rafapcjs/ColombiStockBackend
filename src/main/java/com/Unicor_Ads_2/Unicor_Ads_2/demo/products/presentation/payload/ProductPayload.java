@@ -45,4 +45,7 @@ public class ProductPayload {
 
     @NotNull(message = "El ID de categoría no puede ser nulo")
     private String codigoCategoria;
+
+    @NotNull(message = "El dni de provedor no puede ser nulo")
+    private String dni_provedor;
 }

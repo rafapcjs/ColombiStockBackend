@@ -5,7 +5,7 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.SuppliersNotFoundExc
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.entities.Suppliers;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.repostories.SuppliersRepository;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.payload.SupplierPayload;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.payload.dto.SupplierDto;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.dto.SupplierDto;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.service.interfaces.ISuppliersServices;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

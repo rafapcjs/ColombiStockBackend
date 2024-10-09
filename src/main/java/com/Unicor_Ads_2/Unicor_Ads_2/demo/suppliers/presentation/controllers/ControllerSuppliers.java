@@ -1,8 +1,8 @@
-package com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.payload.controllers;
+package com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.controllers;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.constants.EndpointsConstants;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.payload.SupplierPayload;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.payload.dto.SupplierDto;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.dto.SupplierDto;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.service.interfaces.ISuppliersServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

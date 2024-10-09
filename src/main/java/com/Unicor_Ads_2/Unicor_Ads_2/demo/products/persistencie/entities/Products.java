@@ -2,6 +2,7 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.products.persistencie.entities;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.entities.Categories;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.entities.BaseEntity;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.entities.Suppliers;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import lombok.*;
 @Builder
 @Entity
 @Table(name = "products")
-public class Products  extends BaseEntity {
+public class Products extends BaseEntity {
 
 
     @Column(name = "name", nullable = false, length = 100)
@@ -28,7 +29,7 @@ public class Products  extends BaseEntity {
 
     private int stock; // Cantidad disponible en stock
     @Column(name = "stock_min", nullable = false)
-    private  int stockMin; // Cantidad mínima de stock
+    private int stockMin; // Cantidad mínima de stock
     @Column(name = "unit", length = 20)
     private String unit; // Unidad de medida (e.g., kg, unidades, litros)
     @Column(name = "code", nullable = false, updatable = false, unique = true)
@@ -36,9 +37,11 @@ public class Products  extends BaseEntity {
 
 
     @ManyToOne
-    @JoinColumn(name = "category_id") // Foreign key en la tabla products
-    private Categories category; // Cada producto pertenece a una categoría
-
+    @JoinColumn(name = "category_id")
+    private Categories category;
+    @ManyToOne
+    @JoinColumn(name = "suppliers_id")
+    private Suppliers suppliers;
 
 
 }

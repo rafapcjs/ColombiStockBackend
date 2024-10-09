@@ -14,6 +14,8 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.presentation.dto.CategoryCoun
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.presentation.dto.ProductDTO;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.presentation.payload.ProductPayload;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.service.interfaces.IProductsServices;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.entities.Suppliers;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.repostories.SuppliersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,6 +34,7 @@ public class ProductcServicesImpl implements IProductsServices {
 
     private final IProductsRepository iProductsRepository;
     private final ModelMapperConfig modelMapperConfig;
+    private final SuppliersRepository suppliersRepository;
     private final CategoriesRepository categoriesRepository;
     private  final ProductFactory productFactory;
 
@@ -55,6 +58,21 @@ public class ProductcServicesImpl implements IProductsServices {
                 }
             } else {
                 throw new IllegalArgumentException("El producto debe tener un código de categoría");
+            }
+
+            // Verifica si el payload contiene un DNI de proveedor válido
+            if (productPayload.getDni_provedor() != null && !productPayload.getDni_provedor().isEmpty()) {
+                // Busca el proveedor por su DNI
+                Optional<Suppliers> optionalSupplier = suppliersRepository.findSuppliersByDniIgnoreCase(productPayload.getDni_provedor());
+                if (optionalSupplier.isPresent()) {
+                    // Asigna la entidad proveedor encontrada a products
+                    Suppliers existingSupplier = optionalSupplier.orElseThrow(); // Obtiene la instancia gestionada directamente
+                    products.setSuppliers(existingSupplier); // Asigna el proveedor a products
+                } else {
+                    throw new IllegalArgumentException("Proveedor no encontrado con el DNI proporcionado");
+                }
+            } else {
+                throw new IllegalArgumentException("El producto debe tener un DNI de proveedor");
             }
 
             // Guarda el producto
