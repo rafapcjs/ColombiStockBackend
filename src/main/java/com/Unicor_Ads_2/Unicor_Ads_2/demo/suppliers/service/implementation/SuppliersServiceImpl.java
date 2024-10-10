@@ -2,6 +2,7 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.service.implementation;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.DuplicateSuppliersException;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.SuppliersNotFoundException;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.factory.SuppliersFactory;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.entities.Suppliers;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.repostories.SuppliersRepository;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.presentation.payload.SupplierPayload;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SuppliersServiceImpl implements ISuppliersServices {
     private final SuppliersRepository suppliersRepository;
-    private final ModelMapper modelMapper;
+    private final SuppliersFactory suppliersFactory;
 
     @Override
     @Transactional
@@ -83,27 +84,14 @@ public class SuppliersServiceImpl implements ISuppliersServices {
     public Optional<SupplierDto> findSuppliersByEmail(String email) {
 
         return suppliersRepository.findSuppliersByEmailIgnoreCase(email)
-                .map(suppliers -> SupplierDto.builder()
-                        .name(suppliers.getName())
-                        .lastName(suppliers.getLastName())
-                        .dni(suppliers.getDni())
-                        .email(suppliers.getEmail())
-                        .phone(suppliers.getPhone())
-                        .build());
-
+                .map(suppliersFactory::createSupplierDTO);
     }
 
     @Override
     @Transactional
     public Optional<SupplierDto> findSuppliersByPhone(String phone) {
         return suppliersRepository.findSuppliersByPhoneIgnoreCase(phone)
-                .map(suppliers -> SupplierDto.builder()
-                        .name(suppliers.getName())
-                        .lastName(suppliers.getLastName())
-                        .dni(suppliers.getDni())
-                        .email(suppliers.getEmail())
-                        .phone(suppliers.getPhone())
-                        .build());
+                .map(suppliersFactory::createSupplierDTO);
     }
 
     @Override
@@ -113,13 +101,7 @@ public class SuppliersServiceImpl implements ISuppliersServices {
         Page<Suppliers> suppliersPage = suppliersRepository.findAll(pageable);
 
         List<SupplierDto> supplierDtoList = suppliersPage.stream()
-                .map(suppliers -> SupplierDto.builder()
-                        .name(suppliers.getName())
-                        .lastName(suppliers.getLastName())
-                        .dni(suppliers.getDni())
-                        .email(suppliers.getEmail())
-                        .phone(suppliers.getPhone())
-                        .build())
+                .map(suppliersFactory::createSupplierDTO)
                 .collect(Collectors.toList());
         return new PageImpl<>(supplierDtoList, pageable, suppliersPage.getTotalElements());
     }
