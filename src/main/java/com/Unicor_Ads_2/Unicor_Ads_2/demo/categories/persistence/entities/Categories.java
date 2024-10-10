@@ -15,6 +15,7 @@ import lombok.*;
 @Entity
 @Table(name = "categories")
 public class Categories extends BaseEntity {
+
  @Column(name = "name", length = 50, nullable = false, unique = true)
  private String name;
 

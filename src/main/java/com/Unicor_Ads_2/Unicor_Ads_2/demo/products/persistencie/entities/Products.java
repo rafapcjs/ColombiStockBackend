@@ -2,9 +2,12 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.products.persistencie.entities;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.entities.Categories;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.entities.BaseEntity;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.persistence.entity.Stock;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.entities.Suppliers;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,7 +29,6 @@ public class Products extends BaseEntity {
     private Double purchasePrice;
 
     @Column(name = "stock", nullable = false)
-
     private int stock; // Cantidad disponible en stock
     @Column(name = "stock_min", nullable = false)
     private int stockMin; // Cantidad mínima de stock
@@ -42,6 +44,9 @@ public class Products extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "suppliers_id")
     private Suppliers suppliers;
+
+    @OneToMany(mappedBy = "products", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Stock> stockMovements;
 
 
 }
