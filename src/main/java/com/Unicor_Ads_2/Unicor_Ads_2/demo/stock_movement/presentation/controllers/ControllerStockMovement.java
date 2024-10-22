@@ -31,9 +31,9 @@ public class ControllerStockMovement {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping(value = "/stock-in", headers = "Accept=application/json")
-    public ResponseEntity<StockDTO> movementStockIn(@RequestBody StockPayload stockPayload, @RequestParam MovementType movementType) throws URISyntaxException {
+    public ResponseEntity<StockDTO> movementStockIn(@RequestBody StockPayload stockPayload) throws URISyntaxException {
 
-      StockDTO stockDTO =  stockService.movementProductStockIn(stockPayload,movementType.STOCK_IN);
+      StockDTO stockDTO =  stockService.movementProductStockIn(stockPayload);
 
         return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_PRODUCTS)).body(stockDTO);
     }
@@ -51,7 +51,7 @@ public class ControllerStockMovement {
     @PostMapping(value = "/stock-out", headers = "Accept=application/json")
     public ResponseEntity<StockDTO> movementStockOut(@RequestBody StockPayload stockPayload) throws URISyntaxException {
 
-        StockDTO stockDTO = stockService.movementProductStockOut(stockPayload, MovementType.STOCK_OUT);
+        StockDTO stockDTO = stockService.movementProductStockOut(stockPayload);
 
         return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_STOCK_MOVEMENT)).body(stockDTO);
     }

@@ -35,37 +35,47 @@ public class StockServiceImpl implements IStockService {
     private final StockFactory factory;
 
     private Stock createMovementStock(StockPayload stockPayload, MovementType movementType) {
-        if (stockPayload.getQuantity() <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor que cero");
-        }
-
         Products products = productsRepository.findProductsByCodeIgnoreCase(stockPayload.getProductCode())
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con el código: " + stockPayload.getProductCode()));
 
         // Buscar si ya existe un stock para este producto
-        List<Stock> existingStocks = stockRepository.findByProductCode(products.getCode());
+        Stock stock = stockRepository.findByProductCode(products.getCode()).stream().findFirst().orElse(null);
 
-        Stock stock;
-
-        if (!existingStocks.isEmpty()) {
-            stock = existingStocks.get(0); // Tomar el primer resultado
-            stock.setQuantity(stock.getQuantity() + stockPayload.getQuantity());
-        } else {
+        if (stock == null) {
+            // Si no existe, crear un nuevo stock
             Integer maxCode = stockRepository.findMaxCode().orElse(999);
             stock = factory.convertToStock(stockPayload, products, maxCode, movementType);
+        } else {
+            // Si existe, se actualiza la cantidad dependiendo del tipo de movimiento
+            adjustStockQuantity(stock, stockPayload, movementType);
         }
 
         stock.setMovementType(movementType);
-
         return stock;
     }
 
-    @Override
-    public StockDTO movementProductStockIn(StockPayload stockPayload, MovementType movementType) {
-        // Verificar si el tipo de movimiento es de entrada de stock
+    private void adjustStockQuantity(Stock stock, StockPayload stockPayload, MovementType movementType) {
+        int quantity = stockPayload.getQuantity();
         if (movementType == MovementType.STOCK_IN) {
-            // Crear el movimiento de stock
-            Stock stockMovement = createMovementStock(stockPayload, movementType);
+            if (quantity <= 0) {
+                throw new IllegalArgumentException("La cantidad de entrada debe ser mayor que cero");
+            }
+            stock.setQuantity(stock.getQuantity() + quantity);
+        } else if (movementType == MovementType.STOCK_OUT) {
+            if (quantity <= 0) {
+                throw new IllegalArgumentException("La cantidad de salida debe ser mayor que cero");
+            }
+            if (stock.getQuantity() < quantity) {
+                throw new IllegalArgumentException("No hay suficiente stock disponible");
+            }
+            stock.setQuantity(stock.getQuantity() - quantity);
+        }
+    }
+
+    @Override
+    public StockDTO movementProductStockIn(StockPayload stockPayload) {
+        try {
+            Stock stockMovement = createMovementStock(stockPayload, MovementType.STOCK_IN);
 
             // Actualizar el stock del producto
             Products product = stockMovement.getProducts();
@@ -74,40 +84,30 @@ public class StockServiceImpl implements IStockService {
             stockRepository.save(stockMovement); // Guardar el movimiento de stock
             productsRepository.save(product); // Actualizar el producto
 
-            StockDTO stockDTO = factory.stockDTO(stockMovement);
-            return stockDTO;
+            return factory.stockDTO(stockMovement);
 
-        } else {
-            throw new UnsupportedOperationException("Error creating a stock In");
+        } catch (Exception e) {
+            throw new UnsupportedOperationException("Error creating stock movement IN", e);
         }
     }
 
     @Override
-    public StockDTO movementProductStockOut(StockPayload stockPayload, MovementType movementType) {
-        if (movementType == MovementType.STOCK_OUT) {
-            Stock stockMovement = createMovementStock(stockPayload, movementType);
-            Products products = stockMovement.getProducts();
-
-            // Verificar que haya suficiente stock para realizar la salida
-            if (products.getStock() < stockPayload.getQuantity()) {
-                throw new IllegalArgumentException("No hay suficiente stock disponible");
-            }
+    public StockDTO movementProductStockOut(StockPayload stockPayload) {
+        try {
+            Stock stockMovement = createMovementStock(stockPayload, MovementType.STOCK_OUT);
 
             // Actualizar el stock del producto
-            products.setStock(products.getStock() - stockPayload.getQuantity());
+            Products product = stockMovement.getProducts();
+            product.setStock(product.getStock() - stockPayload.getQuantity());
 
             stockRepository.save(stockMovement); // Guardar el movimiento de stock
-            productsRepository.save(products); // Actualizar el producto
+            productsRepository.save(product); // Actualizar el producto
 
-            StockDTO stockDTO = factory.stockDTO(stockMovement);
-            return stockDTO;
-
-        } else {
-            throw new UnsupportedOperationException("Error creating a stock Out");
+            return factory.stockDTO(stockMovement);
+        } catch (IllegalArgumentException e) {
+            throw new UnsupportedOperationException("Error creating stock movement OUT", e);
         }
     }
-
-
 
 
     @Override
@@ -166,8 +166,6 @@ public class StockServiceImpl implements IStockService {
             pageable = stocksPage.hasNext() ? stocksPage.nextPageable() : null;
         } while (pageable != null);
     }
-
-
 
 
 }

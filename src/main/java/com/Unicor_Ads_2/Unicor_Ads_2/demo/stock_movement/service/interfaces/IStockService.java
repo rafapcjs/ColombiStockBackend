@@ -11,9 +11,9 @@ import java.util.Optional;
 public interface IStockService {
 
 
-    StockDTO movementProductStockIn(StockPayload stockPayload, MovementType movementType);
+    StockDTO movementProductStockIn(StockPayload stockPayload);
 
-     StockDTO movementProductStockOut(StockPayload stockPayload, MovementType movementType);
+     StockDTO movementProductStockOut(StockPayload stockPayload);
 
     void updateDescriptionStock(Integer code , StockPayload stockPayload);
 
