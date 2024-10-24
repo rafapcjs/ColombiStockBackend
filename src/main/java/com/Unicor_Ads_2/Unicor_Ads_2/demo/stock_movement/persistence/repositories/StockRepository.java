@@ -7,8 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,9 +26,17 @@ public interface StockRepository extends JpaRepository<Stock , UUID> {
 
     Page<Stock> findAllByStatusEntity(StatusEntity statusEntity , Pageable pageable);
 
+    @Query("SELECT s FROM Stock s WHERE s.statusEntity = :statusEntity AND s.movementType = :movementType")
+    Page<Stock> findAllStockOutOrIn(@Param("statusEntity") StatusEntity statusEntity, @Param("movementType") MovementType movementType, Pageable pageable);
+
     @Query("SELECT MAX(sm.code) FROM Stock sm")
     Optional<Integer> findMaxCode();
 
-    List<Stock> findByProductCode(String productCode);
+    @Query("SELECT s FROM Stock s WHERE s.updateDate = :today")
+    Page<Stock> findAllByTodayDate(@Param("today") LocalDate today, Pageable pageable);
+
+    @Query("SELECT s FROM Stock s WHERE s.statusEntity = :statusEntity AND s.updateDate BETWEEN :startDate AND :endDate")
+    Page<Stock> findAllByDateBetween(@Param("statusEntity") StatusEntity statusEntity, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, Pageable pageable);
+
 
 }

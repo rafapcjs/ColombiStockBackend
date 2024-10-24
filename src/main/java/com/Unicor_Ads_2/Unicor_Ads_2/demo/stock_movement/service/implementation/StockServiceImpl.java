@@ -31,7 +31,6 @@ public class StockServiceImpl implements IStockService {
 
     private final StockRepository stockRepository;
     private final IProductsRepository productsRepository;
-    private final ModelMapper modelMapper;
     private final StockFactory factory;
 
     private Stock createMovementStock(StockPayload stockPayload, MovementType movementType) {
