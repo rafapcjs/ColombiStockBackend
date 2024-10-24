@@ -6,7 +6,8 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.presentation.dto.StockD
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
+
+import java.util.Date;
 import java.util.Optional;
 
 public interface IStockGetService {
@@ -15,7 +16,7 @@ public interface IStockGetService {
 
     Page<StockDTO> findAllStockOutOrIn(Pageable pageable , StatusEntity statusEntity , MovementType movementType);
 
-    Page<StockDTO> findAllByDateBetween(Pageable pageable , StatusEntity statusEntity, LocalDate startDate, LocalDate endDate);
+    Page<StockDTO> findAllByDateBetween(Pageable pageable , StatusEntity statusEntity, Date startDate, Date endDate);
 
     Page<StockDTO> findAllByTodayDate(Pageable pageable );
 

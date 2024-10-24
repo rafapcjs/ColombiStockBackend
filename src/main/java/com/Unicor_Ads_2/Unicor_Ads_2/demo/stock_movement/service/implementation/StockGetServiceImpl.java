@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -51,7 +53,7 @@ public class StockGetServiceImpl implements IStockGetService {
     }
 
     @Override
-    public Page<StockDTO> findAllByDateBetween(Pageable pageable, StatusEntity statusEntity, LocalDate startDate, LocalDate endDate) {
+    public Page<StockDTO> findAllByDateBetween(Pageable pageable, StatusEntity statusEntity, Date startDate, Date endDate) {
 
         try {
             Page<Stock> stocks = stockRepository.findAllByDateBetween(statusEntity, startDate, endDate, pageable);
@@ -62,13 +64,16 @@ public class StockGetServiceImpl implements IStockGetService {
         }
     }
 
+
+
     @Override
     public Page<StockDTO> findAllByTodayDate(Pageable pageable) {
 
         try {
             LocalDate today = LocalDate.now();
+            Date todayDate = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-            Page<Stock> stocks = stockRepository.findAllByTodayDate(today, pageable);
+            Page<Stock> stocks = stockRepository.findAllByTodayDate(todayDate, pageable);
             Page<StockDTO> stockDTOS = stocks.map(factory::stockDTO);
 
             return stockDTOS;
@@ -76,6 +81,10 @@ public class StockGetServiceImpl implements IStockGetService {
             throw new RuntimeException("Error getting stocks", e);
         }
     }
+
+
+
+
 
     @Override
     @Transactional

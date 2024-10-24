@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,8 +20,6 @@ import java.util.UUID;
 public interface StockRepository extends JpaRepository<Stock , UUID> {
 
     Optional<Stock> findByCodeAndStatusEntity(Integer code, StatusEntity statusEntity );
-
-    Optional<Stock> findFirstByProductCodeAndMovementTypeOrderByUpdateDateDesc(String productCode, MovementType movementType);
 
     Optional<Stock> findByCode(Integer code);
 
@@ -32,11 +31,9 @@ public interface StockRepository extends JpaRepository<Stock , UUID> {
     @Query("SELECT MAX(sm.code) FROM Stock sm")
     Optional<Integer> findMaxCode();
 
-    @Query("SELECT s FROM Stock s WHERE s.updateDate = :today")
-    Page<Stock> findAllByTodayDate(@Param("today") LocalDate today, Pageable pageable);
+    @Query("SELECT s FROM Stock s WHERE FUNCTION('DATE', s.createDate) = :today")
+    Page<Stock> findAllByTodayDate(@Param("today") Date today, Pageable pageable);
 
-    @Query("SELECT s FROM Stock s WHERE s.statusEntity = :statusEntity AND s.updateDate BETWEEN :startDate AND :endDate")
-    Page<Stock> findAllByDateBetween(@Param("statusEntity") StatusEntity statusEntity, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, Pageable pageable);
-
-
+    @Query("SELECT s FROM Stock s WHERE s.statusEntity = :statusEntity AND s.createDate BETWEEN :startDate AND :endDate")
+    Page<Stock> findAllByDateBetween(@Param("statusEntity") StatusEntity statusEntity, @Param("startDate") Date startDate, @Param("endDate") Date endDate, Pageable pageable);
 }

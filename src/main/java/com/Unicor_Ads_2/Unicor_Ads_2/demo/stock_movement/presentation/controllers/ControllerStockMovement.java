@@ -1,8 +1,6 @@
 package com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.presentation.controllers;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.constants.EndpointsConstants;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.presentation.payload.ProductPayload;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.persistence.enums.MovementType;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.presentation.dto.StockDTO;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.presentation.payload.StockPayload;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.service.interfaces.IStockService;
