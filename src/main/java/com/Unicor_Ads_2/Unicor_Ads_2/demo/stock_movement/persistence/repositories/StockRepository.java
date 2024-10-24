@@ -2,6 +2,7 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.persistence.repositori
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.enums.StatusEntity;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.persistence.entity.Stock;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.persistence.enums.MovementType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +17,8 @@ import java.util.UUID;
 public interface StockRepository extends JpaRepository<Stock , UUID> {
 
     Optional<Stock> findByCodeAndStatusEntity(Integer code, StatusEntity statusEntity );
+
+    Optional<Stock> findFirstByProductCodeAndMovementTypeOrderByUpdateDateDesc(String productCode, MovementType movementType);
 
     Optional<Stock> findByCode(Integer code);
 

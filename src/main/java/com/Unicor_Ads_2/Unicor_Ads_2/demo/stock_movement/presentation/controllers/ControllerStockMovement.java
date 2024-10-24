@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
 @RequiredArgsConstructor
 public class ControllerStockMovement {
 
-    private  final IStockService stockService;
+    private final IStockService stockService;
 
     @Operation(summary = "Crear una entrada de stock",
             description = "Crea una nueva entrada de stock a partir del payload proporcionado.")
@@ -33,14 +33,12 @@ public class ControllerStockMovement {
     @PostMapping(value = "/stock-in", headers = "Accept=application/json")
     public ResponseEntity<StockDTO> movementStockIn(@RequestBody StockPayload stockPayload) throws URISyntaxException {
 
-      StockDTO stockDTO =  stockService.movementProductStockIn(stockPayload);
+        StockDTO stockDTO = stockService.movementProductStockIn(stockPayload);
 
         return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_PRODUCTS)).body(stockDTO);
     }
 
 
-
-    
     @Operation(summary = "Crear una salida de stock",
             description = "Crea una nueva salida de stock a partir del payload proporcionado.")
     @ApiResponses(value = {
@@ -55,5 +53,21 @@ public class ControllerStockMovement {
 
         return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_STOCK_MOVEMENT)).body(stockDTO);
     }
+
+
+    @Operation(summary = "Actualizar descripción y cantidad de un movimiento de stock",
+            description = "Actualiza la descripción y la cantidad de un movimiento de stock existente.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Movimiento de stock actualizado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos en la solicitud"),
+            @ApiResponse(responseCode = "404", description = "Movimiento de stock no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    @PutMapping(value = "/update-stock", headers = "Accept=application/json")
+    public ResponseEntity<Void> updateDescriptionStock(@RequestParam Integer code, @RequestBody StockPayload stockPayload)  {
+        stockService.updateStock(code, stockPayload);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

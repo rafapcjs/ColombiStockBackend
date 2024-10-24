@@ -15,7 +15,7 @@ public interface IStockService {
 
      StockDTO movementProductStockOut(StockPayload stockPayload);
 
-    void updateDescriptionStock(Integer code , StockPayload stockPayload);
+    void updateStock(Integer code , StockPayload stockPayload);
 
     void deleteStockMovement(Integer code);
 
