@@ -2,9 +2,8 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.products.service.implementation;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.entities.Categories;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.repositories.CategoriesRepository;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.presentation.dto.CategoriesDto;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.service.interfaces.ICategoriesServices;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.CategoryNotFoundException;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.EntityNotFoundException;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.IntegridadReferencialException;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.ProductNotFoundException;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.configurations.ModelMapperConfig;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.factory.ProductFactory;
@@ -86,15 +85,28 @@ public class ProductcServicesImpl implements IProductsServices {
     @Override
     @Transactional
     public void deleteByCode(String code) {
+        // Buscar el producto por código
         Optional<Products> existingCode = iProductsRepository.findProductsByCodeIgnoreCase(code);
+
         if (existingCode.isPresent()) {
+            Products product = existingCode.get();
+
+            // Verificar si el producto tiene proveedores o categorías asociadas
+            // Ambas listas deben estar vacías para proceder con la eliminación
+            if (!product.getSuppliers().getProductsList().isEmpty() || !product.getCategory().getProducts().isEmpty()) {
+                throw new IntegridadReferencialException("No se puede eliminar el producto con código " + code + " porque tiene productos asociados a proveedores o categorías.");
+            }
+
+            // Si no tiene productos asociados, eliminar el producto
             iProductsRepository.deleteByCode(code);
         } else {
-            throw new ProductNotFoundException("El producto no existe");
+            // Si el producto no existe, lanzar la excepción
+            throw new EntityNotFoundException("El producto con el código " + code + " no existe.");
         }
     }
 
-    @Override
+
+        @Override
     @Transactional(readOnly = true)
     public Optional<ProductDTO> findProductsByCodeIgnoreCase(String code) {
         Optional<Products> existingCode = iProductsRepository.findProductsByCodeIgnoreCase(code);

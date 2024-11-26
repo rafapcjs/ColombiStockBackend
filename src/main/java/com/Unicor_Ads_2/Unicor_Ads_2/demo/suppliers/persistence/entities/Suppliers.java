@@ -1,14 +1,18 @@
 package com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.entities;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.entities.BaseEntity;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.persistencie.entities.Products;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -43,4 +47,6 @@ public class Suppliers extends BaseEntity {
     @Size(max = 100, message = "El correo electrónico no puede exceder los 100 caracteres.")
     private String email;
 
+    @OneToMany(mappedBy = "suppliers")
+    private List<Products> productsList;
 }
