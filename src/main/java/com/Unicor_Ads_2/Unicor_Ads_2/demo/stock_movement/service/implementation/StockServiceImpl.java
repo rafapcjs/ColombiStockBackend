@@ -1,6 +1,7 @@
 package com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.service.implementation;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.enums.StatusEntity;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.ResourceNotFoundException;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.persistencie.entities.Products;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.persistencie.repositories.IProductsRepository;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.persistence.entity.Stock;
@@ -11,7 +12,7 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.presentation.dto.StockD
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.presentation.payload.StockPayload;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.service.interfaces.IStockService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,7 +35,7 @@ public class StockServiceImpl implements IStockService {
 
     private Stock createMovementStock(StockPayload stockPayload, MovementType movementType) {
         Products products = productsRepository.findProductsByCodeIgnoreCase(stockPayload.getProductCode())
-                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con el código: " + stockPayload.getProductCode()));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con el código: " + stockPayload.getProductCode()));
         // Crear un nuevo stock
         Integer maxCode = stockRepository.findMaxCode().orElse(999);
         Stock stock = factory.convertToStock(stockPayload, products, maxCode, movementType);
@@ -64,10 +64,10 @@ public class StockServiceImpl implements IStockService {
 
     @Override
     public StockDTO movementProductStockIn(StockPayload stockPayload) {
-        try {
+
             // Buscar el stock existente del producto
             Products product = productsRepository.findProductsByCodeIgnoreCase(stockPayload.getProductCode())
-                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con el código: " + stockPayload.getProductCode()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con el código: " + stockPayload.getProductCode()));
 
             // Actualizar la cantidad del stock existente
             product.setStock(product.getStock() + stockPayload.getQuantity());
@@ -79,18 +79,16 @@ public class StockServiceImpl implements IStockService {
 
             return factory.stockDTO(stockMovement);
 
-        } catch (Exception e) {
-            throw new UnsupportedOperationException("Error creating stock movement IN", e);
-        }
+
     }
 
 
     @Override
     public StockDTO movementProductStockOut(StockPayload stockPayload) {
-        try {
+
             // Buscar el producto correspondiente
             Products product = productsRepository.findProductsByCodeIgnoreCase(stockPayload.getProductCode())
-                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con el código: " + stockPayload.getProductCode()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con el código: " + stockPayload.getProductCode()));
 
             // Verificar si hay suficiente stock disponible
             if (product.getStock() < stockPayload.getQuantity()) {
@@ -106,9 +104,7 @@ public class StockServiceImpl implements IStockService {
             stockRepository.save(stockOut);
 
             return factory.stockDTO(stockOut);
-        } catch (IllegalArgumentException e) {
-            throw new UnsupportedOperationException("Error creating stock movement OUT", e);
-        }
+
     }
 
 

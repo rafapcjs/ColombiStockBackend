@@ -1,13 +1,13 @@
 package com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.service.implementation;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.enums.StatusEntity;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.ResourceNotFoundException;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.factory.StockFactory;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.persistence.entity.Stock;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.persistence.enums.MovementType;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.persistence.repositories.StockRepository;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.presentation.dto.StockDTO;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.service.interfaces.IStockGetService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +36,7 @@ public class StockGetServiceImpl implements IStockGetService {
 
             return stockDTOS;
         } catch (Exception e) {
-            throw new RuntimeException("Error getting stocks", e);
+            throw new ResourceNotFoundException("Error getting stocks", e);
         }
     }
 
@@ -48,7 +48,7 @@ public class StockGetServiceImpl implements IStockGetService {
             Page<StockDTO> stockDTOS = stocks.map(factory::stockDTO);
             return stockDTOS;
         } catch (Exception e) {
-            throw new RuntimeException("Error getting stocks", e);
+            throw new ResourceNotFoundException("Error getting stocks", e);
         }
     }
 
@@ -60,7 +60,7 @@ public class StockGetServiceImpl implements IStockGetService {
             Page<StockDTO> stockDTOS = stocks.map(factory::stockDTO);
             return stockDTOS;
         } catch (Exception e) {
-            throw new RuntimeException("Error getting stocks", e);
+            throw new ResourceNotFoundException("Error getting stocks", e);
         }
     }
 
@@ -78,7 +78,7 @@ public class StockGetServiceImpl implements IStockGetService {
 
             return stockDTOS;
         } catch (Exception e) {
-            throw new RuntimeException("Error getting stocks", e);
+            throw new ResourceNotFoundException("Error getting stocks", e);
         }
     }
 
@@ -101,7 +101,7 @@ public class StockGetServiceImpl implements IStockGetService {
            return Optional.of(stockDTO);
 
         } else {
-            throw new EntityNotFoundException("Stock not found");
+            throw new ResourceNotFoundException("Stock not found");
         }
 
     }
