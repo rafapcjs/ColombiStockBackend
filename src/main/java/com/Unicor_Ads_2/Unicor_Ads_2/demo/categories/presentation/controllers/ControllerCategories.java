@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -35,7 +36,7 @@ public class ControllerCategories {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping()
-    public ResponseEntity<?> save(@RequestBody CategoriesPayload categoriesPayload) throws URISyntaxException {
+    public ResponseEntity<?> save(@Validated @RequestBody CategoriesPayload categoriesPayload) throws URISyntaxException {
         iCategoriesServices.saveCategory(categoriesPayload);
         return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_CATEGORIES)).build();
     }
@@ -56,14 +57,14 @@ public class ControllerCategories {
     @Operation(summary = "Actualizar una categoría",
             description = "Actualiza los detalles de una categoría existente por su código.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Categoría actualizada exitosamente"),
+            @ApiResponse(responseCode = "204", description = "Categoría actualizada exitosamente"),
             @ApiResponse(responseCode = "404", description = "Categoría no encontrada"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PutMapping("/{code}")
-    public ResponseEntity<?> update(@PathVariable String code, @RequestBody CategoriesPayload categoriesPayload) {
+    public ResponseEntity<Void> update(@PathVariable String code, @Validated @RequestBody CategoriesPayload categoriesPayload) {
         iCategoriesServices.updateCategory(categoriesPayload, code);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Obtener lista de categorías",
@@ -94,7 +95,7 @@ public class ControllerCategories {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/{code}")
-    public ResponseEntity<?> getCode(@PathVariable String code) {
+    public ResponseEntity<Optional<CategoriesDto>> getCode(@PathVariable String code) {
         Optional<CategoriesDto> categoriesDto = iCategoriesServices.findCategoriesByCodeIgnoreCase(code);
         return new ResponseEntity<>(categoriesDto, HttpStatus.OK);
     }

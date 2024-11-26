@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -29,7 +30,7 @@ public class ControllerStockMovement {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping(value = "/stock-in", headers = "Accept=application/json")
-    public ResponseEntity<StockDTO> movementStockIn(@RequestBody StockPayload stockPayload) throws URISyntaxException {
+    public ResponseEntity<StockDTO> movementStockIn(@Validated @RequestBody StockPayload stockPayload) throws URISyntaxException {
 
         StockDTO stockDTO = stockService.movementProductStockIn(stockPayload);
 
@@ -45,7 +46,7 @@ public class ControllerStockMovement {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping(value = "/stock-out", headers = "Accept=application/json")
-    public ResponseEntity<StockDTO> movementStockOut(@RequestBody StockPayload stockPayload) throws URISyntaxException {
+    public ResponseEntity<StockDTO> movementStockOut(@Validated @RequestBody StockPayload stockPayload) throws URISyntaxException {
 
         StockDTO stockDTO = stockService.movementProductStockOut(stockPayload);
 
@@ -62,7 +63,7 @@ public class ControllerStockMovement {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PutMapping(value = "/update-stock", headers = "Accept=application/json")
-    public ResponseEntity<Void> updateDescriptionStock(@RequestParam Integer code, @RequestBody StockPayload stockPayload)  {
+    public ResponseEntity<Void> updateDescriptionStock(@RequestParam Integer code, @Validated  @RequestBody StockPayload stockPayload)  {
         stockService.updateStock(code, stockPayload);
         return ResponseEntity.ok().build();
     }

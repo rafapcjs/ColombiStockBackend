@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -39,7 +40,7 @@ public class ControllerSuppliers {
     })
     @PostMapping(headers = "Accept=application/json")
 
-    public ResponseEntity<?> save(@RequestBody SupplierPayload supplierPayload) throws URISyntaxException {
+    public ResponseEntity<?> save(@Validated @RequestBody SupplierPayload supplierPayload) throws URISyntaxException {
         iSuppliersServices.saveSupplier(supplierPayload);
         return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_SUPPLIERS)).build();
     }
@@ -55,7 +56,7 @@ public class ControllerSuppliers {
     })
     @PutMapping(value = "/{dni}", headers = "Accept=application/json")
 
-    public ResponseEntity<?> update(@PathVariable String dni, @RequestBody SupplierPayload supplierPayload) {
+    public ResponseEntity<?> update(@PathVariable String dni, @Validated @RequestBody SupplierPayload supplierPayload) {
         iSuppliersServices.updateSupplier(supplierPayload, dni);
 
         return ResponseEntity.ok().build();

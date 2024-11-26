@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -41,7 +42,7 @@ public class ControllerProducts {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping(headers = "Accept=application/json")
-    public ResponseEntity<?> save(@RequestBody ProductPayload productPayload) throws URISyntaxException {
+    public ResponseEntity<?> save(@Validated @RequestBody ProductPayload productPayload) throws URISyntaxException {
         iProductsServices.saveProduct(productPayload);
         return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_PRODUCTS)).build();
     }
