@@ -1,9 +1,6 @@
 package com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.service.implementation;
 
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.DuplicateSuppliersException;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.EntityNotFoundException;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.IntegridadReferencialException;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.SuppliersNotFoundException;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.*;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.factory.SuppliersFactory;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.entities.Suppliers;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.repostories.SuppliersRepository;
@@ -32,15 +29,12 @@ public class SuppliersServiceImpl implements ISuppliersServices {
     @Transactional
     public void saveSupplier(SupplierPayload supplierPayload) {
 
-        try {
+
             ModelMapper modelMapper = new ModelMapper();
 
             Suppliers suppliers = modelMapper.map(supplierPayload, Suppliers.class);
             suppliersRepository.save(suppliers);
-        } catch (Exception e) {
 
-            throw new UnsupportedOperationException("Error saving suppliers");
-        }
     }
 
     @Override
@@ -117,7 +111,7 @@ public class SuppliersServiceImpl implements ISuppliersServices {
 Suppliers suppliers = existingSuppliers.get();
 
 if (!suppliers.getProductsList().isEmpty()){
-    throw new IntegridadReferencialException("No se puede eliminar el provedor con cedula " + dni + " porque tiene productos asociados.");
+    throw new ReferentialIntegrityException("No se puede eliminar el provedor con cedula " + dni + " porque tiene productos asociados.");
 
 }
 
@@ -125,7 +119,7 @@ if (!suppliers.getProductsList().isEmpty()){
             return "supplier deleted with CC :" + dni;
 
         } else {
-            throw new EntityNotFoundException("Supplier not found with dni :" + dni);
+            throw new ResourceNotFoundException("Supplier not found with dni :" + dni);
         }
     }
 }

@@ -5,10 +5,8 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.entities.Catego
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.repositories.CategoriesRepository;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.presentation.dto.CategoriesDto;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.presentation.payload.CategoriesPayload;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.DuplicateException;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.IntegridadReferencialException;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.EntityNotFoundException;
- import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.service.interfaces.ICategoriesServices;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.*;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.service.interfaces.ICategoriesServices;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -51,7 +49,7 @@ public class CategoriesServicesImpl implements ICategoriesServices {
 
             if (!categories.getProducts().isEmpty()) {
 
-                throw new IntegridadReferencialException("No se puede eliminar la categoría con código " + code + " porque tiene productos asociados.");
+                throw new ReferentialIntegrityException("No se puede eliminar la categoría con código " + code + " porque tiene productos asociados.");
 
 
             }
@@ -62,7 +60,7 @@ public class CategoriesServicesImpl implements ICategoriesServices {
         }
 
 
-        throw new EntityNotFoundException("Categoría con código " + code + " no encontrada.");
+        throw new ResourceNotFoundException("Categoría con código " + code + " no encontrada.");
     }
 
     @Override
