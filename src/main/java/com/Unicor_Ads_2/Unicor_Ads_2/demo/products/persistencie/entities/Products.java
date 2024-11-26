@@ -49,4 +49,6 @@ public class Products extends BaseEntity {
     private List<Stock> stockMovements;
 
 
+
+
 }

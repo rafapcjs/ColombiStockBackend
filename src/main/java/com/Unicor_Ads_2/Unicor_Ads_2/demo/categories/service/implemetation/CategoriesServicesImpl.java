@@ -5,9 +5,10 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.entities.Catego
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.repositories.CategoriesRepository;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.presentation.dto.CategoriesDto;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.presentation.payload.CategoriesPayload;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.CategoryNotFoundException;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.DuplicateCategoryException;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.service.interfaces.ICategoriesServices;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.DuplicateException;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.IntegridadReferencialException;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.EntityNotFoundException;
+ import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.service.interfaces.ICategoriesServices;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -31,15 +32,12 @@ public class CategoriesServicesImpl implements ICategoriesServices {
     @Override
     @Transactional
     public void saveCategory(CategoriesPayload categoriesPayload) {
-        try {
+
             // Verificar si la categoría ya existe
             ModelMapper modelMapper = new ModelMapper();
             // Mapear y guardar la categoría
             Categories categories = modelMapper.map(categoriesPayload, Categories.class);
             categoriesRepository.save(categories);
-        } catch (Exception e) {
-            throw new UnsupportedOperationException("Error al guardar la categoría");
-        }
     }
 
     @Override
@@ -47,11 +45,24 @@ public class CategoriesServicesImpl implements ICategoriesServices {
     public String deleteByCode(String code) {
         Optional<Categories> existingCategory = categoriesRepository.findCategoriesByCodeIgnoreCase(code);
         if (existingCategory.isPresent()) {
+
+
+            Categories categories = existingCategory.get();
+
+            if (!categories.getProducts().isEmpty()) {
+
+                throw new IntegridadReferencialException("No se puede eliminar la categoría con código " + code + " porque tiene productos asociados.");
+
+
+            }
             categoriesRepository.deleteByCode(code);
             return "Categoría eliminada con éxito " + code;
         } else {
-            throw new UnsupportedOperationException("Categoría no encontrada con el código: " + code);
+
         }
+
+
+        throw new EntityNotFoundException("Categoría con código " + code + " no encontrada.");
     }
 
     @Override
@@ -85,18 +96,18 @@ public class CategoriesServicesImpl implements ICategoriesServices {
             Categories category = existingCategory.get();
             Optional<Categories> duplicateCodeCategory = categoriesRepository.findCategoriesByCodeIgnoreCase(categoriesPayload.getCode());
             if (duplicateCodeCategory.isPresent() && !duplicateCodeCategory.get().equals(category)) {
-                throw new DuplicateCategoryException("Category with code " + categoriesPayload.getCode() + " already exists.");
+                throw new DuplicateException("Category with code " + categoriesPayload.getCode() + " already exists.");
             }
             Optional<Categories> duplicateNameCategory = categoriesRepository.findCategoriesByNameIgnoreCase(categoriesPayload.getName());
             if (duplicateNameCategory.isPresent() && !duplicateNameCategory.get().equals(category)) {
-                throw new DuplicateCategoryException("Category with name " + categoriesPayload.getName() + " already exists.");
+                throw new DuplicateException("Category with name " + categoriesPayload.getName() + " already exists.");
             }
             category.setCode(categoriesPayload.getCode());
             category.setName(categoriesPayload.getName());
             category.setDescription(categoriesPayload.getDescription());
             categoriesRepository.save(category);
         } else {
-            throw new CategoryNotFoundException("Category with code " + code + " not found.");
+            throw new EntityNotFoundException("Category with code " + code + " not found.");
         }
     }
 }
