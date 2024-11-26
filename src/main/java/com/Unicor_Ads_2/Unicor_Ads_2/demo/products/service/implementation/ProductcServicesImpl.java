@@ -2,9 +2,7 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.products.service.implementation;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.entities.Categories;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.repositories.CategoriesRepository;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.EntityNotFoundException;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.IntegridadReferencialException;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.ProductNotFoundException;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.*;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.configurations.ModelMapperConfig;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.factory.ProductFactory;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.persistencie.entities.Products;
@@ -40,47 +38,23 @@ public class ProductcServicesImpl implements IProductsServices {
     @Override
     @Transactional
     public void saveProduct(ProductPayload productPayload) {
-        try {
-            // Mapea el payload a la entidad Products
-            Products products = modelMapperConfig.modelMapper().map(productPayload, Products.class);
+        // Mapea el payload a la entidad Products
+        Products products = modelMapperConfig.modelMapper().map(productPayload, Products.class);
 
-            // Verifica si el payload contiene un código de categoría válido
-            if (productPayload.getCodigoCategoria() != null && !productPayload.getCodigoCategoria().isEmpty()) {
-                // Busca la categoría por su código
-                Optional<Categories> optionalCategory = categoriesRepository.findCategoriesByCodeIgnoreCase(productPayload.getCodigoCategoria());
-                if (optionalCategory.isPresent()) {
-                    // Asigna la entidad categoría encontrada a products
-                    Categories existingCategory = optionalCategory.orElseThrow(); // Obtiene la instancia gestionada directamente
-                    products.setCategory(existingCategory); // Asigna la categoría a products
-                } else {
-                    throw new IllegalArgumentException("Categoría no encontrada con el código proporcionado");
-                }
-            } else {
-                throw new IllegalArgumentException("El producto debe tener un código de categoría");
-            }
+        // Busca y asigna la categoría por código
+        Categories category = categoriesRepository.findCategoriesByCodeIgnoreCase(productPayload.getCodigoCategoria())
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con el código proporcionado"));
+        products.setCategory(category);
 
-            // Verifica si el payload contiene un DNI de proveedor válido
-            if (productPayload.getDni_provedor() != null && !productPayload.getDni_provedor().isEmpty()) {
-                // Busca el proveedor por su DNI
-                Optional<Suppliers> optionalSupplier = suppliersRepository.findSuppliersByDniIgnoreCase(productPayload.getDni_provedor());
-                if (optionalSupplier.isPresent()) {
-                    // Asigna la entidad proveedor encontrada a products
-                    Suppliers existingSupplier = optionalSupplier.orElseThrow(); // Obtiene la instancia gestionada directamente
-                    products.setSuppliers(existingSupplier); // Asigna el proveedor a products
-                } else {
-                    throw new IllegalArgumentException("Proveedor no encontrado con el DNI proporcionado");
-                }
-            } else {
-                throw new IllegalArgumentException("El producto debe tener un DNI de proveedor");
-            }
+        // Busca y asigna el proveedor por DNI
+        Suppliers supplier = suppliersRepository.findSuppliersByDniIgnoreCase(productPayload.getDni_provedor())
+                .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado con el DNI proporcionado"));
+        products.setSuppliers(supplier);
 
-            // Guarda el producto
-            iProductsRepository.save(products);
-        } catch (Exception e) {
-            // Maneja la excepción
-            throw new UnsupportedOperationException("Error al guardar el producto", e);
-        }
+        // Guarda el producto
+        iProductsRepository.save(products);
     }
+
 
     @Override
     @Transactional
@@ -94,14 +68,14 @@ public class ProductcServicesImpl implements IProductsServices {
             // Verificar si el producto tiene proveedores o categorías asociadas
             // Ambas listas deben estar vacías para proceder con la eliminación
             if (!product.getSuppliers().getProductsList().isEmpty() || !product.getCategory().getProducts().isEmpty()) {
-                throw new IntegridadReferencialException("No se puede eliminar el producto con código " + code + " porque tiene productos asociados a proveedores o categorías.");
+                throw new ReferentialIntegrityException("No se puede eliminar el producto con código " + code + " porque tiene productos asociados a proveedores o categorías.");
             }
 
             // Si no tiene productos asociados, eliminar el producto
             iProductsRepository.deleteByCode(code);
         } else {
             // Si el producto no existe, lanzar la excepción
-            throw new EntityNotFoundException("El producto con el código " + code + " no existe.");
+            throw new ResourceNotFoundException("El producto con el código " + code + " no existe.");
         }
     }
 
