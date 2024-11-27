@@ -1,7 +1,6 @@
 package com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception;
 
-import org.apache.coyote.BadRequestException;
-import org.springframework.http.HttpStatus;
+ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,6 +46,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         Map<String, Object> response = new HashMap<>();
+
         response.put("message", "Error interno del servidor. Por favor, intente más tarde.");
         response.put("timestamp", LocalDateTime.now());
         response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
