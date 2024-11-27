@@ -10,7 +10,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class InvoiceDetailDTO {
-    private UUID uuid;
     private String productName;
     private int quantity;
     private double unitPrice;

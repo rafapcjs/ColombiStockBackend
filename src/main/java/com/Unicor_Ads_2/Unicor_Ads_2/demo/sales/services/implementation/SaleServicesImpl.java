@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SaleServicesImpl
-implements ISalesServices {
+        implements ISalesServices {
     private final IProductsRepository iProductsRepository;
     private final ISalesRepository iSalesRepository;
     private final SalesFactory salesFactory;
-    private  final ISalesProductRepository iSalesProductRepository;
+    private final ISalesProductRepository iSalesProductRepository;
 
     @Transactional
     public InvoiceDTO createSale(List<ProductItemDto> productItems) {
@@ -124,19 +124,19 @@ implements ISalesServices {
                     List<SaleProduct> saleProducts = iSalesProductRepository.findBySale(sale);
 
                     List<InvoiceDetailDTO> details = saleProducts.stream()
-                            .map(sp -> salesFactory.createInvoiceDetailDTO(
-                                    sp.getProduct(),
-                                    sp.getProduct().getPrice() * sp.getQuantity(),
-                                    sp.getQuantity()
-                            ))
+                            .map(sp -> {
+                                int quantity = sp.getQuantity() != null ? sp.getQuantity() : 0;
+                                double totalPrice = sp.getProduct().getPrice() * quantity;
+                                return salesFactory.createInvoiceDetailDTO(
+                                        sp.getProduct(),
+                                        totalPrice,
+                                        quantity
+                                );
+                            })
                             .collect(Collectors.toList());
 
-                    return InvoiceDTO.builder()
-                            .saleId(sale.getUuid())
-                            .saleDate(sale.getSaleDate())
-                            .totalAmount(sale.getTotalAmount())
-                            .details(details)
-                            .build();
+                    return salesFactory.createInvoiceDTO(sale, details);
+
                 })
                 .collect(Collectors.toList());
     }
@@ -158,12 +158,8 @@ implements ISalesServices {
                             ))
                             .collect(Collectors.toList());
 
-                    return InvoiceDTO.builder()
-                            .saleId(sale.getUuid())
-                            .saleDate(sale.getSaleDate())
-                            .totalAmount(sale.getTotalAmount())
-                            .details(details)
-                            .build();
+                    return salesFactory.createInvoiceDTO(sale, details);
+
                 })
                 .collect(Collectors.toList());
     }
