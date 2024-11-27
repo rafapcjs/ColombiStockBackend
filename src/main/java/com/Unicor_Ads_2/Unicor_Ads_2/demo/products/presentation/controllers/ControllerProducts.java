@@ -150,4 +150,35 @@ public class ControllerProducts {
         List<CategoryCountProductDTO> categoryCountList = iProductsServices.countProductsByCategory();
         return ResponseEntity.ok(categoryCountList);
     }
+
+
+
+
+
+
+
+    @Operation(summary = "Actualizar un producto",
+            description = "Actualiza la información de un producto dado su código.",
+            tags = {"Productos"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Producto actualizado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+
+
+    @PutMapping("/{code}")
+    public ResponseEntity<?> updateProduct(
+            @PathVariable("code") String code,
+            @RequestBody ProductPayload productPayload) {
+
+         this.iProductsServices.updateProduct(code, productPayload);
+
+
+
+             return ResponseEntity.noContent().build();
+        }
+
 }

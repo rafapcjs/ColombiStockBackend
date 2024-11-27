@@ -19,7 +19,7 @@ public interface IProductsServices {
     Optional<ProductDTO> findProductsByCodeIgnoreCase(String code);
 
 
-
+ void updateProduct (String code , ProductPayload productPayload);
     Page<ProductDTO> findByStockLessThanEqualStockMin(Pageable pageable);
 
     Page<ProductDTO> findAll(Pageable pageable);

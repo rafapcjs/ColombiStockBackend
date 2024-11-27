@@ -92,6 +92,30 @@ public class ProductcServicesImpl implements IProductsServices {
 
     }
 
+    @Override
+    public void updateProduct(String code, ProductPayload productPayload) {
+
+        Optional<Products> optionalProducts = iProductsRepository.findProductsByCodeIgnoreCase(code);
+
+        if (optionalProducts.isPresent()) {
+            Products products = optionalProducts.get();
+            products.setName(productPayload.getName());
+            products.setStock(productPayload.getStock());
+            products.setPrice(productPayload.getPrice());
+            products.setDescription(productPayload.getDescription());
+            products.setStockMin(productPayload.getStockMin());
+
+            // Guardamos el producto actualizado en la base de datos
+            iProductsRepository.save(products);
+        } else {
+                throw new ResourceNotFoundException("Product with code " + code + " not found.");
+        }
+    }
+
+
+
+
+
 
     @Override
     @Transactional(readOnly = true)
