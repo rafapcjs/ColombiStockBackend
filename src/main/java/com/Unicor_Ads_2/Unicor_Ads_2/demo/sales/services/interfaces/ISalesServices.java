@@ -10,5 +10,6 @@ public interface ISalesServices {
 
       InvoiceDTO createSale(List<ProductItemDto> productItems);
       void cancelSale (UUID saleId);
-
+      List<InvoiceDTO> listActiveSales();
+      List<InvoiceDTO> listCancelledSales();
 }

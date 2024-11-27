@@ -11,6 +11,7 @@ public class SalesFactory {
         public InvoiceDetailDTO createInvoiceDetailDTO(Products products, double totalPrice, int quantity) {
 
             return InvoiceDetailDTO.builder()
+
                     .productName(products.getName())
                     .quantity(quantity) // Usar el parámetro quantity en lugar de item.getQuantity()
                     .unitPrice(products.getPrice())

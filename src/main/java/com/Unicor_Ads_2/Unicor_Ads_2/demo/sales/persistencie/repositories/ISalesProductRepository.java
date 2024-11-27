@@ -10,9 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ISalesRepository extends JpaRepository<Sales, UUID> {
+public interface ISalesProductRepository extends JpaRepository<SaleProduct, Long> {
+    List<SaleProduct> findBySale(Sales sale);
 
-    Optional<Sales>findByUuid(UUID uuid);
-    List<Sales> findByIsCancelledFalse();
-    List<Sales> findByIsCancelledTrue();
-}
+ }

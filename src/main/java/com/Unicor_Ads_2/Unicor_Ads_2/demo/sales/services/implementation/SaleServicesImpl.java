@@ -4,7 +4,9 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.exception.ResourceNotFoundExce
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.persistencie.entities.Products;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.products.persistencie.repositories.IProductsRepository;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.factory.SalesFactory;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.persistencie.entities.SaleProduct;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.persistencie.entities.Sales;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.persistencie.repositories.ISalesProductRepository;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.persistencie.repositories.ISalesRepository;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.presentation.dto.InvoiceDTO;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.presentation.dto.InvoiceDetailDTO;
@@ -12,8 +14,10 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.presentation.dto.ProductItemDto;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.services.interfaces.ISalesServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,91 +26,148 @@ implements ISalesServices {
     private final IProductsRepository iProductsRepository;
     private final ISalesRepository iSalesRepository;
     private final SalesFactory salesFactory;
+    private  final ISalesProductRepository iSalesProductRepository;
 
-    @Override
+    @Transactional
     public InvoiceDTO createSale(List<ProductItemDto> productItems) {
-
-
         List<Products> productsForSale = new ArrayList<>();
         List<InvoiceDetailDTO> invoiceDetails = new ArrayList<>();
         double totalAmount = 0.0;
 
+        Sales sale = new Sales();
+        sale.setSaleDate(new Date());
+
+        List<SaleProduct> saleProducts = new ArrayList<>();
 
         for (ProductItemDto item : productItems) {
+            Products product = iProductsRepository.findProductsByCodeIgnoreCase(item.getCodeProduct())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-            Products products = iProductsRepository.findProductsByCodeIgnoreCase(item.getCodeProduct()).orElseThrow(() -> new ResourceNotFoundException("Producto not found"));
-
-            if (products.getStock() < item.getQuantity()) {
-                throw new ResourceNotFoundException("Stock is so insufficient");
-
+            if (product.getStock() < item.getQuantity()) {
+                throw new ResourceNotFoundException("Insufficient stock");
             }
 
-            // update stock current the product
-            products.setStock(products.getStock() - item.getQuantity());
-            iProductsRepository.save(products);
+            // Update product stock
+            product.setStock(product.getStock() - item.getQuantity());
+            iProductsRepository.save(product);
 
-            double totalPrice = products.getPrice() * item.getQuantity();
+            // Calculate total
+            double productTotal = product.getPrice() * item.getQuantity();
+            totalAmount += productTotal;
 
+            // Create SaleProduct
+            SaleProduct saleProduct = new SaleProduct();
+            saleProduct.setSale(sale);
+            saleProduct.setProduct(product);
+            saleProduct.setQuantity(item.getQuantity()); // Explicitly set quantity
 
-            InvoiceDetailDTO detail = salesFactory.createInvoiceDetailDTO(products, totalPrice, item.getQuantity());
+            saleProducts.add(saleProduct);
+            productsForSale.add(product);
+
+            // Create invoice detail
+            InvoiceDetailDTO detail = salesFactory.createInvoiceDetailDTO(product, productTotal, item.getQuantity());
             invoiceDetails.add(detail);
-
-
-            totalAmount += totalPrice;
-            productsForSale.add(products);
-
         }
 
-        Sales sales = Sales.builder()
+        // Set sale details
+        sale.setTotalAmount(totalAmount);
 
-                .saleDate(new Date())
-                .totalAmount(totalAmount)
-                .products(productsForSale)
-                .build();
+        // Save sale
+        sale = iSalesRepository.save(sale);
 
-        sales = iSalesRepository.save(sales);
+        // Save sale products
+        iSalesProductRepository.saveAll(saleProducts);
 
         return InvoiceDTO.builder()
-                .saleId(sales.getUuid())
-                .saleDate(sales.getSaleDate())
+                .saleId(sale.getUuid())
+                .saleDate(sale.getSaleDate())
                 .totalAmount(totalAmount)
                 .details(invoiceDetails)
                 .build();
-
     }
-
 
     @Override
+    @Transactional
     public void cancelSale(UUID saleId) {
-        // Recuperar la venta por su UUID usando Optional
-        Optional<Sales> optionalSale = iSalesRepository.findByUuid(saleId);
+        Sales sale = iSalesRepository.findByUuid(saleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sale not found"));
 
-        // Si no se encuentra la venta, lanzamos una excepción
-        Sales sale = optionalSale.orElseThrow(() -> new ResourceNotFoundException("Sale not found"));
-
-        // Verificar si la venta ya ha sido cancelada
         if (sale.isCancelled()) {
-            throw new ResourceNotFoundException("Sale has already been cancelled");
+            throw new IllegalStateException("Sale has already been cancelled");
         }
 
-        // Verificar si la venta tiene productos asociados
-        List<Products> productsSold = sale.getProducts(); // Obtener los productos de la venta
-        List<Integer> quantitiesSold = sale.getProductQuantities(); // Obtener las cantidades vendidas
+        List<SaleProduct> saleProducts = iSalesProductRepository.findBySale(sale);
 
-        // Si no hay productos vendidos, lanzar una excepción
-
-        // Iterar sobre los productos vendidos en la venta
-        for (int i = 0; i < productsSold.size(); i++) {
-            Products product = productsSold.get(i);
-            int quantitySold = quantitiesSold.get(i);
-
-            // Restaurar la cantidad vendida al stock
-            product.setStock(product.getStock() + quantitySold);  // Asegúrate de sumar la cantidad que se vendió
-            iProductsRepository.save(product);  // Guardar el producto con el stock actualizado
+        if (saleProducts.isEmpty()) {
+            throw new IllegalStateException("No products found in this sale");
         }
 
-        // Marcar la venta como cancelada
+        for (SaleProduct saleProduct : saleProducts) {
+            // Add null check and default value
+            Products product = saleProduct.getProduct();
+            int quantitySold = saleProduct.getQuantity();
+            product.setStock(product.getStock() + quantitySold);
+            iProductsRepository.save(product);
+        }
+
         sale.setCancelled(true);
-        iSalesRepository.save(sale);  // Guardar la venta con el estado actualizado
+        iSalesRepository.save(sale);
+    }
+
+    @Override
+    public List<InvoiceDTO> listActiveSales() {
+        List<Sales> activeSales = iSalesRepository.findByIsCancelledFalse();
+
+        return activeSales.stream()
+                .map(sale -> {
+                    // Find associated SaleProducts
+                    List<SaleProduct> saleProducts = iSalesProductRepository.findBySale(sale);
+
+                    List<InvoiceDetailDTO> details = saleProducts.stream()
+                            .map(sp -> salesFactory.createInvoiceDetailDTO(
+                                    sp.getProduct(),
+                                    sp.getProduct().getPrice() * sp.getQuantity(),
+                                    sp.getQuantity()
+                            ))
+                            .collect(Collectors.toList());
+
+                    return InvoiceDTO.builder()
+                            .saleId(sale.getUuid())
+                            .saleDate(sale.getSaleDate())
+                            .totalAmount(sale.getTotalAmount())
+                            .details(details)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InvoiceDTO> listCancelledSales() {
+        List<Sales> cancelledSales = iSalesRepository.findByIsCancelledTrue();
+
+        return cancelledSales.stream()
+                .map(sale -> {
+                    // Find associated SaleProducts
+                    List<SaleProduct> saleProducts = iSalesProductRepository.findBySale(sale);
+
+                    List<InvoiceDetailDTO> details = saleProducts.stream()
+                            .map(sp -> salesFactory.createInvoiceDetailDTO(
+                                    sp.getProduct(),
+                                    sp.getProduct().getPrice() * sp.getQuantity(),
+                                    sp.getQuantity()
+                            ))
+                            .collect(Collectors.toList());
+
+                    return InvoiceDTO.builder()
+                            .saleId(sale.getUuid())
+                            .saleDate(sale.getSaleDate())
+                            .totalAmount(sale.getTotalAmount())
+                            .details(details)
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 }
+
+
+

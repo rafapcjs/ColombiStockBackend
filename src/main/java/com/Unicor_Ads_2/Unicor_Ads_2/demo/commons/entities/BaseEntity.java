@@ -2,6 +2,7 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.entities;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.enums.StatusEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@EntityListeners(AuditingEntityListener.class)
+ @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class BaseEntity {
 
