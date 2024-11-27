@@ -8,8 +8,10 @@ import java.util.UUID;
 
 public interface ISalesServices {
 
-      InvoiceDTO createSale(List<ProductItemDto> productItems);
-      void cancelSale (UUID saleId);
+       void cancelSale (UUID saleId);
       List<InvoiceDTO> listActiveSales();
       List<InvoiceDTO> listCancelledSales();
+      byte[] createSale(List<ProductItemDto> productItems);
+
+
 }
