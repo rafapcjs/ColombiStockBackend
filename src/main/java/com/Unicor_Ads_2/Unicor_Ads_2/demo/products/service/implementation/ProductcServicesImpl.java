@@ -62,25 +62,27 @@ public class ProductcServicesImpl implements IProductsServices {
         // Buscar el producto por código
         Optional<Products> existingCode = iProductsRepository.findProductsByCodeIgnoreCase(code);
 
+        // Verificar si el producto existe
         if (existingCode.isPresent()) {
             Products product = existingCode.get();
 
-            // Verificar si el producto tiene proveedores o categorías asociadas
-            // Ambas listas deben estar vacías para proceder con la eliminación
-            if (!product.getSuppliers().getProductsList().isEmpty() || !product.getCategory().getProducts().isEmpty()) {
-                throw new ReferentialIntegrityException("No se puede eliminar el producto con código " + code + " porque tiene productos asociados a proveedores o categorías.");
+            // Verificar si el producto no tiene movimientos de stock ni ventas asociadas
+            if (product.getStockMovements().isEmpty() && product.getSaleProducts().isEmpty()) {
+                // Si no tiene productos asociados, eliminar el producto
+                iProductsRepository.deleteByCode(code);
+            } else {
+                // Si el producto tiene asociaciones, lanzar excepción
+                throw new IntegridadReferencialException("El producto con el código " + code + " tiene movimientos de stock o ventas asociadas, no se puede eliminar.");
             }
-
-            // Si no tiene productos asociados, eliminar el producto
-            iProductsRepository.deleteByCode(code);
         } else {
-            // Si el producto no existe, lanzar la excepción
+            // Si no se encuentra el producto, lanzar excepción de producto no encontrado
             throw new ResourceNotFoundException("El producto con el código " + code + " no existe.");
         }
     }
 
 
-        @Override
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<ProductDTO> findProductsByCodeIgnoreCase(String code) {
         Optional<Products> existingCode = iProductsRepository.findProductsByCodeIgnoreCase(code);

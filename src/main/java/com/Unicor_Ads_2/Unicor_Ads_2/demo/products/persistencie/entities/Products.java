@@ -2,6 +2,7 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.products.persistencie.entities;
 
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.categories.persistence.entities.Categories;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.entities.BaseEntity;
+import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.persistencie.entities.SaleProduct;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.persistence.entity.Stock;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.persistence.entities.Suppliers;
 import jakarta.persistence.*;
@@ -47,6 +48,8 @@ public class Products extends BaseEntity {
 
     @OneToMany(mappedBy = "products", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Stock> stockMovements;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SaleProduct> saleProducts; // Relación bidireccional con SaleProduct
 
 
 
