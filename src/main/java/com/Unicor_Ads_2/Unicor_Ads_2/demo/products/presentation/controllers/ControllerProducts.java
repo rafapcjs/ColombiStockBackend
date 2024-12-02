@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-
+@Tag(name = "product")
 @RestController
 @RequestMapping(path = EndpointsConstants.ENDPOINT_PRODUCTS)
 @RequiredArgsConstructor
@@ -150,4 +151,34 @@ public class ControllerProducts {
         List<CategoryCountProductDTO> categoryCountList = iProductsServices.countProductsByCategory();
         return ResponseEntity.ok(categoryCountList);
     }
+
+
+
+
+
+
+
+    @Operation(summary = "Actualizar un producto",
+            description = "Actualiza la información de un producto dado su código.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Producto actualizado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+
+
+    @PutMapping("/{code}")
+    public ResponseEntity<?> updateProduct(
+            @PathVariable("code") String code,
+            @RequestBody ProductPayload productPayload) {
+
+         this.iProductsServices.updateProduct(code, productPayload);
+
+
+
+             return ResponseEntity.noContent().build();
+        }
+
 }

@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,13 +56,16 @@ private  final ISalesServices iSalesServices;
                     content = @Content(mediaType = "application/json")
             )
     })
-    public ResponseEntity<InvoiceDTO> createSale(@RequestBody List<ProductItemDto> productItems) throws URISyntaxException {
+     public ResponseEntity<byte[]> generateInvoice(@RequestBody List<ProductItemDto> productItems) {
+        // Llamar al servicio para crear la venta y generar el PDF
+        byte[] pdfBytes = iSalesServices.createSale(productItems);
 
-        InvoiceDTO invoice = this.iSalesServices.createSale(productItems);
-
-        return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_SALES_DETAILS)).body(invoice);
+        // Configurar la respuesta HTTP con el archivo PDF
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=factura.pdf") // Forzar descarga
+                .contentType(MediaType.APPLICATION_PDF) // Tipo de contenido
+                .body(pdfBytes); // Cuerpo del archivo
     }
-
 
     @DeleteMapping("/{uuid}")
     @Operation(
