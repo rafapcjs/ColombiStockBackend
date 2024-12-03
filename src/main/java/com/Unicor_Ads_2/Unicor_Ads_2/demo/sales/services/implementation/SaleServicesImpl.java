@@ -83,6 +83,7 @@ public class SaleServicesImpl
             productsForSale.add(product);
 
             // Create invoice detail
+
             InvoiceDetailDTO detail = salesFactory.createInvoiceDetailDTO(product, productTotal, item.getQuantity());
             invoiceDetails.add(detail);
         }

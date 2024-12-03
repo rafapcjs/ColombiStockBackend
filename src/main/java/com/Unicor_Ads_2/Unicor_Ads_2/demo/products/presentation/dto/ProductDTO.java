@@ -14,5 +14,6 @@ public record ProductDTO(
         String unit,
         String code,
         String codigoCategoria
+        ,String suppliersName
 ) {}
 

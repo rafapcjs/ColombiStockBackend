@@ -105,7 +105,7 @@ public class ControllerProducts {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content)
     })
 
-    @GetMapping(value = "/low-stock", headers = "Accept=application/json")
+    @GetMapping(value = "/search/low-stock", headers = "Accept=application/json")
     public ResponseEntity<Page<ProductDTO>> getLowStockProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

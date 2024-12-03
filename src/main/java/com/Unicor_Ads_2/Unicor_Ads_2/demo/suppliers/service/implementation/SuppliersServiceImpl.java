@@ -69,6 +69,7 @@ public class SuppliersServiceImpl implements ISuppliersServices {
             suppliers.setName(supplierPayload.getName());
             suppliers.setPhone(supplierPayload.getPhone());
             suppliers.setLastName(supplierPayload.getLastName());
+            suppliersRepository.save(suppliers);
         } else {
 
             throw new SuppliersNotFoundException("Suppliers with" + dni + "not found");
