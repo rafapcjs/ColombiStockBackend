@@ -24,6 +24,7 @@ import java.util.UUID;
 @RestController
 @Tag(name = "Sales")
 @RequiredArgsConstructor
+@RequestMapping(path = EndpointsConstants.ENDPOINT_SALES_DETAILS)
 public class ControllerSales {
 
 private  final ISalesServices iSalesServices;
