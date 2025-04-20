@@ -7,6 +7,7 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.constants.EndpointsConst
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +37,7 @@ public class ControllerCategories {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping()
-    public ResponseEntity<?> save(@Validated @RequestBody CategoriesPayload categoriesPayload) throws URISyntaxException {
+    public ResponseEntity<?> save(@Valid @RequestBody CategoriesPayload categoriesPayload) throws URISyntaxException {
         iCategoriesServices.saveCategory(categoriesPayload);
         return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_CATEGORIES)).build();
     }
