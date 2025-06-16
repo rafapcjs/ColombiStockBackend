@@ -2,9 +2,11 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.products.presentation.dto;
 
 import lombok.Builder;
 
+import java.util.UUID;
+
 @Builder
 public record ProductDTO(
-        Long id,
+        UUID id,
         String name,
         String description,
         Double price,
@@ -13,6 +15,7 @@ public record ProductDTO(
         int stockMin,
         String unit,
         String code,
-        String codigoCategoria
+        String nameCategory,
+        String nameSuppliers
 ) {}
 

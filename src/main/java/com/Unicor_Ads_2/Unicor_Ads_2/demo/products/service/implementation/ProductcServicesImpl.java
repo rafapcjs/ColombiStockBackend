@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,25 +36,57 @@ public class ProductcServicesImpl implements IProductsServices {
     private final CategoriesRepository categoriesRepository;
     private  final ProductFactory productFactory;
 
+@Override
+@Transactional
+
+    public long countProductsWithLowStock() {
+        // Obtener los productos cuyo stock es menor que el stock mínimo
+        List<Products> lowStockProducts = iProductsRepository.findProductsWithLowStock();
+        return lowStockProducts.size(); // Retorna la cantidad de productos con bajo stock
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public Long getTotalStock() {
+        return iProductsRepository.sumTotalStock();
+    }
     @Override
     @Transactional
     public void saveProduct(ProductPayload productPayload) {
         // Mapea el payload a la entidad Products
         Products products = modelMapperConfig.modelMapper().map(productPayload, Products.class);
 
-        // Busca y asigna la categoría por código
+        // Asigna la categoría por código
         Categories category = categoriesRepository.findCategoriesByCodeIgnoreCase(productPayload.getCodigoCategoria())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con el código proporcionado"));
         products.setCategory(category);
 
-        // Busca y asigna el proveedor por DNI
+        // Asigna el proveedor por DNI
         Suppliers supplier = suppliersRepository.findSuppliersByDniIgnoreCase(productPayload.getDni_provedor())
                 .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado con el DNI proporcionado"));
         products.setSuppliers(supplier);
 
-        // Guarda el producto
+        // El precio de compra y el stock provienen de otros sistemas (no se obtienen de la factura aquí)
+        // El precio de compra y stock real ya están asignados automáticamente en el sistema, así que no los tomamos de la factura
+
+        // Asignar el precio de venta proporcionado por el usuario
+        products.setPrice(productPayload.getPrice());
+
+        // Asignar el stock mínimo proporcionado por el usuario
+        products.setStockMin(productPayload.getStockMin());
+
+        // Asignar la fecha de vencimiento proporcionada por el usuario
+        if (productPayload.getVencimiento() != null) {
+            // Validación si la fecha de vencimiento es en el futuro
+            if (productPayload.getVencimiento().isBefore(LocalDate.now())) {
+                throw new IllegalArgumentException("La fecha de vencimiento no puede ser anterior a la fecha actual");
+            }
+            products.setVencimiento(productPayload.getVencimiento());
+        }
+
+        // Guarda el producto con los valores proporcionados por el usuario
         iProductsRepository.save(products);
     }
+
 
 
     @Override
@@ -89,35 +122,45 @@ public class ProductcServicesImpl implements IProductsServices {
 
         return existingCode.map(products -> productFactory.createProductDTO(products));
 
-
     }
 
     @Override
     public void updateProduct(String code, ProductPayload productPayload) {
-
+        // Buscar el producto por el código proporcionado
         Optional<Products> optionalProducts = iProductsRepository.findProductsByCodeIgnoreCase(code);
 
         if (optionalProducts.isPresent()) {
             Products products = optionalProducts.get();
-            products.setName(productPayload.getName());
-            products.setStock(productPayload.getStock());
-            products.setPrice(productPayload.getPrice());
-            products.setDescription(productPayload.getDescription());
-            products.setStockMin(productPayload.getStockMin());
 
-            // Guardamos el producto actualizado en la base de datos
+            // Actualizar solo los campos que se pueden modificar
+            products.setName(productPayload.getName());
+            products.setDescription(productPayload.getDescription());
+            products.setStockMin(productPayload.getStockMin()); // El stock mínimo se puede actualizar
+
+            // El precio de venta (price) puede ser actualizado
+            if (productPayload.getPrice() != null) {
+                products.setPrice(productPayload.getPrice());  // Actualizamos el precio de venta
+            }
+
+            // Si la fecha de vencimiento ha sido proporcionada, actualízala
+            if (productPayload.getVencimiento() != null) {
+                // Validación de la fecha de vencimiento
+                if (productPayload.getVencimiento().isBefore(LocalDate.now())) {
+                    throw new IllegalArgumentException("La fecha de vencimiento no puede ser anterior a la fecha actual");
+                }
+                products.setVencimiento(productPayload.getVencimiento());
+            }
+
+            // **No se deben actualizar ni el stock ni el precio de compra** (purchasePrice) directamente.
+            // El stock y el precio de compra deberían ser gestionados por el sistema y tomados de otros procesos, como la factura.
+
+            // Guarda el producto actualizado en la base de datos
             iProductsRepository.save(products);
         } else {
-                throw new ResourceNotFoundException("Product with code " + code + " not found.");
+            throw new ResourceNotFoundException("Producto con código " + code + " no encontrado.");
         }
     }
 
-
-
-
-
-
-    @Override
     @Transactional(readOnly = true)
     public Page<ProductDTO> findByStockLessThanEqualStockMin(Pageable pageable) {
         // Obtiene la página de productos con stock menor o igual al mínimo

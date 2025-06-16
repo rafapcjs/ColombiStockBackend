@@ -17,9 +17,9 @@ public interface IProductsServices {
     void deleteByCode(String code);
 
     Optional<ProductDTO> findProductsByCodeIgnoreCase(String code);
+      long countProductsWithLowStock();
 
-
- void updateProduct (String code , ProductPayload productPayload);
+    void updateProduct (String code , ProductPayload productPayload);
     Page<ProductDTO> findByStockLessThanEqualStockMin(Pageable pageable);
 
     Page<ProductDTO> findAll(Pageable pageable);
@@ -27,6 +27,7 @@ public interface IProductsServices {
     Page<ProductDTO> findProductsByNameTheCategories(String name, Pageable pageable);
 
     Page<ProductDTO> findProductsByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
+      Long getTotalStock() ;
 
 
     List<CategoryCountProductDTO> countProductsByCategory();

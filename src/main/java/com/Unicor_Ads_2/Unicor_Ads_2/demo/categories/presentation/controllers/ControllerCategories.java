@@ -7,6 +7,7 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.constants.EndpointsConst
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = EndpointsConstants.ENDPOINT_CATEGORIES)
 @RequiredArgsConstructor
+@Tag(name = "Categories")
 
 public class ControllerCategories {
 

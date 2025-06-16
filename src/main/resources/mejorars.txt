@@ -1,0 +1,9 @@
+filtrar productos por categoría para registrar la venta
+/ lector de código para registrar y vender
+// registro de ventas
+// estadisitca
+total de la venta detallado y consolidado
+total de ganancias diario , semanal y mensual
+// producto mas vendidos
+// producto menos vendidos
+// agregar foto a productos

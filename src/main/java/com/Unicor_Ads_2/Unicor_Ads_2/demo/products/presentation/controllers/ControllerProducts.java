@@ -25,10 +25,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+
+import static com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.constants.EndpointsConstants.ENDPOINT_PRODUCTS;
+import static com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.constants.EndpointsConstants.ENDPOINT_PRODUCTS_LOW_STOCK;
+
 @Tag(name = "product")
 @RestController
-@RequestMapping(path = EndpointsConstants.ENDPOINT_PRODUCTS)
-@RequiredArgsConstructor
+ @RequiredArgsConstructor
 
 public class ControllerProducts {
 
@@ -42,7 +45,7 @@ public class ControllerProducts {
             @ApiResponse(responseCode = "400", description = "Datos inválidos en la solicitud"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    @PostMapping(headers = "Accept=application/json")
+    @PostMapping( value = ENDPOINT_PRODUCTS , headers = "Accept=application/json")
     public ResponseEntity<?> save(@Validated @RequestBody ProductPayload productPayload) throws URISyntaxException {
         iProductsServices.saveProduct(productPayload);
         return ResponseEntity.created(new URI(EndpointsConstants.ENDPOINT_PRODUCTS)).build();
@@ -56,7 +59,7 @@ public class ControllerProducts {
             @ApiResponse(responseCode = "200", description = "Operación exitosa"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    @GetMapping(headers = "Accept=application/json")
+    @GetMapping(value = ENDPOINT_PRODUCTS  ,headers = "Accept=application/json")
     public ResponseEntity<Page<ProductDTO>> get(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -105,7 +108,7 @@ public class ControllerProducts {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content)
     })
 
-    @GetMapping(value = "/low-stock", headers = "Accept=application/json")
+    @GetMapping( value = ENDPOINT_PRODUCTS_LOW_STOCK, headers = "Accept=application/json")
     public ResponseEntity<Page<ProductDTO>> getLowStockProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -168,8 +171,8 @@ public class ControllerProducts {
                     content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
 
+@PutMapping(value = ENDPOINT_PRODUCTS +"/{code}" ,headers = "Accept=application/json")
 
-    @PutMapping("/{code}")
     public ResponseEntity<?> updateProduct(
             @PathVariable("code") String code,
             @RequestBody ProductPayload productPayload) {
@@ -180,5 +183,16 @@ public class ControllerProducts {
 
              return ResponseEntity.noContent().build();
         }
+
+
+    @GetMapping(value = ENDPOINT_PRODUCTS+"/count-low-stock")
+    public long getLowStockProductCount() {
+        return iProductsServices.countProductsWithLowStock(); // Retorna la cantidad de productos con stock bajo
+    }
+
+    @GetMapping(value = ENDPOINT_PRODUCTS+"/total-stock")
+    public Long getTotalStock() {
+        return iProductsServices.getTotalStock();  // Llamamos al servicio para obtener la suma de stock
+    }
 
 }

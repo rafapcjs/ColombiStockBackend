@@ -9,6 +9,7 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.service.interfaces.ISto
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = EndpointsConstants.ENDPOINT_STOCK_MOVEMENT)
 @RequiredArgsConstructor
+@Tag(name = "Stock")
 public class ControllersGetStockMovement {
 
     private final IStockGetService stockGetService;

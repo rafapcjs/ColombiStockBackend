@@ -3,6 +3,7 @@ package com.Unicor_Ads_2.Unicor_Ads_2.demo.security.persistence.entity;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.entities.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "users")
+ @Table(name = "users")
 public class UserEntity  extends BaseEntity {
 
     private String username;

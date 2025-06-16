@@ -12,8 +12,8 @@ public record StockDTO(
 
         Integer code,
 
-        String productCode,
-
+        String productCode
+, String name,
         int quantity,
 
         MovementType movementType,

@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,36 +18,29 @@ import lombok.Setter;
 
 public class ProductPayload {
 
-
     @NotBlank(message = "El nombre del producto no puede estar vacío")
     private String name;
 
+    @NotNull(message = "La fecha de fabricación no puede ser nula")
+    private LocalDate fechaFabricacion;  // Fecha de fabricación del producto
+
+    private LocalDate vencimiento;       // Fecha de vencimiento proporcionada por el usuario
+
     private String description;
 
-    @NotNull(message = "El precio no puede ser nulo")
-    @DecimalMin(value = "0.0", inclusive = false, message = "El precio debe ser mayor que cero")
-    private Double price;
-
-    @NotNull(message = "El precio de compra no puede ser nulo")
-    @DecimalMin(value = "0.0", inclusive = false, message = "El precio de compra debe ser mayor que cero")
-    private Double purchasePrice;
+    @NotNull(message = "El precio de venta no puede ser nulo")
+    @DecimalMin(value = "0.0", inclusive = false, message = "El precio de venta debe ser mayor que cero")
+    private Double price;  // Este es el precio de venta, lo ingresa el usuario
 
     @NotNull(message = "El stock no puede ser nulo")
     @DecimalMin(value = "0", message = "La cantidad en stock debe ser mayor o igual que cero")
-    private int stock;
-
-    @NotNull(message = "La cantidad mínima de stock no puede ser nula")
-    @DecimalMin(value = "0", message = "La cantidad mínima de stock debe ser mayor o igual que cero")
-    private int stockMin;
+    private int stockMin;  // Este valor lo ingresa el usuario como cantidad mínima
 
     private String unit;
-     private String code; // Código único del producto
-
-
+    private String code; // Código único del producto
 
     @NotNull(message = "El ID de categoría no puede ser nulo")
     private String codigoCategoria;
-
-    @NotNull(message = "El dni de provedor no puede ser nulo")
+    @NotNull(message = "El dni del proveedor no puede ser nulo")
     private String dni_provedor;
 }

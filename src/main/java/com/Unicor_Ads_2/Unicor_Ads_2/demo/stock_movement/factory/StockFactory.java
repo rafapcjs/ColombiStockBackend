@@ -18,6 +18,7 @@ public class StockFactory {
         return  StockDTO.builder()
                 .code(stock.getCode())
                 .productCode(stock.getProductCode())
+                .name(stock.getProducts().getName())
                 .quantity(stock.getQuantity())
                 .movementType(stock.getMovementType())
                 .description(stock.getDescription())

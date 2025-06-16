@@ -1,7 +1,6 @@
 package com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.presentation.controller;
 
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.constants.EndpointsConstants;
-import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.presentation.dto.InvoiceDTO;
+ import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.presentation.dto.InvoiceDTO;
 import com.Unicor_Ads_2.Unicor_Ads_2.demo.sales.services.interfaces.ISalesServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,11 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.Unicor_Ads_2.Unicor_Ads_2.demo.commons.utils.constants.EndpointsConstants.*;
+
 @RestController
 @Tag(name = "Sales")
 @RequiredArgsConstructor
-@RequestMapping(path = EndpointsConstants.ENDPOINT_SALES_DETAILS)
-public class ControllerGetSales {
+ public class ControllerGetSales {
 
     private  final ISalesServices iSalesServices;
 
@@ -33,7 +33,7 @@ public class ControllerGetSales {
             @ApiResponse(responseCode = "403", description = "Inautorizado - necesitas credenciales"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    @GetMapping("/active")
+    @GetMapping(ENDPOINT_SALES_ACTIVE)
     public ResponseEntity<List<InvoiceDTO>> listActiveSales() {
 
        List<InvoiceDTO> invoiceDTOS =  iSalesServices.listActiveSales();
@@ -53,7 +53,7 @@ public class ControllerGetSales {
             @ApiResponse(responseCode = "403", description = "Inautorizado - necesitas credenciales"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    @GetMapping("/canceled")
+    @GetMapping(ENDPOINT_SALES_LIST_CANCLED)
     public ResponseEntity<List<InvoiceDTO>> listCanceledSales() {
 
         List<InvoiceDTO> invoiceDTOS =  iSalesServices.listActiveSales();

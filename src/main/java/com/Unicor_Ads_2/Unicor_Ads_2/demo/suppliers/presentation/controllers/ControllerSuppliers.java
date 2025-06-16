@@ -8,6 +8,7 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.suppliers.service.interfaces.ISupplier
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = EndpointsConstants.ENDPOINT_SUPPLIERS)
 @RequiredArgsConstructor
+
+@Tag(name = "Suppliers")
 public class ControllerSuppliers {
     private final ISuppliersServices iSuppliersServices;
 

@@ -7,6 +7,7 @@ import com.Unicor_Ads_2.Unicor_Ads_2.demo.stock_movement.service.interfaces.ISto
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +19,7 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping(path = EndpointsConstants.ENDPOINT_STOCK_MOVEMENT)
 @RequiredArgsConstructor
+@Tag(name = "StockMovement")
 public class ControllerStockMovement {
 
     private final IStockService stockService;

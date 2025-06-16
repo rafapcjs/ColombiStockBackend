@@ -10,14 +10,17 @@ public class ProductFactory {
 public  ProductDTO createProductDTO(Products products){
 
     return ProductDTO.builder()
+            .id(products.getUuid())
             .code(products.getCode())
             .price(products.getPrice())
             .description(products.getDescription())
+            .purchasePrice(products.getPurchasePrice())
             .name(products.getName())
             .stock(products.getStock())
             .stockMin(products.getStockMin())
             .unit(products.getUnit())
-            .codigoCategoria(products.getCategory() != null ? products.getCategory().getCode() : null)
+            .nameCategory(products.getCategory().getName())
+            .nameSuppliers(products.getSuppliers().getName())
 
             .build();
     }

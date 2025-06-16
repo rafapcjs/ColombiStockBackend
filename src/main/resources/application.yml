@@ -8,18 +8,18 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 10          # Máximo de conexiones en el pool
-      minimum-idle: 2                # Conexiones mínimas ociosas
-      max-lifetime: 30000            # Cierre de conexiones luego de 30s (útil en dev o para evitar conexiones muertas)
-      connection-timeout: 20000      # Tiempo máx. para obtener una conexión (20s)
-      validation-timeout: 5000       # Tiempo máx. para validar una conexión (5s)
+      maximum-pool-size: 10          # Mï¿½ximo de conexiones en el pool
+      minimum-idle: 2                # Conexiones mï¿½nimas ociosas
+      max-lifetime: 30000            # Cierre de conexiones luego de 30s (ï¿½til en dev o para evitar conexiones muertas)
+      connection-timeout: 20000      # Tiempo mï¿½x. para obtener una conexiï¿½n (20s)
+      validation-timeout: 5000       # Tiempo mï¿½x. para validar una conexiï¿½n (5s)
       keepalive-time: 15000          # "Ping" cada 15s para mantenerlas vivas
       connection-test-query: SELECT 1
 
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update              # Solo usar "update" en desarrollo, preferiblemente "validate" en producción
+      ddl-auto: update             # Solo usar "update" en desarrollo, preferiblemente "validate" en producciï¿½n
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -39,4 +39,4 @@ security:
 
 email:
   sender: ${EMAIL_SENDER}           # Usa variables de entorno para mayor seguridad
-  password: ${EMAIL_PASSWORD}       # No incluyas contraseñas directamente en el YAML
+  password: ${EMAIL_PASSWORD}       # No incluyas contraseï¿½as directamente en el YAML
